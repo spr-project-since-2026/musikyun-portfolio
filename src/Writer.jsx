@@ -200,7 +200,7 @@ export default function Writer() {
     }
 
     return (
-        <div style={{ padding: 20 }}>
+        <div className="container">
             <h2>ライター画面</h2>
 
             <button onClick={handleLogout}>ログアウト</button>
@@ -219,9 +219,15 @@ export default function Writer() {
             <br /><br />
 
             <textarea
-                placeholder="本文"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
+                rows={10}
+                style={{
+                    width: '100%',
+                    fontSize: '16px',
+                    lineHeight: '1.6',
+                    padding: '8px'
+                }}
             />
 
             <br /><br />

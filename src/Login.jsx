@@ -27,6 +27,7 @@ export default function Login() {
             .single()
 
         if (profileError) {
+            console.log(profileError)
             alert('role取得失敗')
             return
         }
@@ -41,7 +42,7 @@ export default function Login() {
     }
 
     return (
-        <div style={{ padding: 20 }}>
+        <div className="container">
             <h2>ログイン</h2>
 
             <input

@@ -101,6 +101,30 @@ export default function Editor() {
             loadArticles()
         }
     }
+    const handleCreate = async () => {
+        const { data } = await supabase.auth.getUser()
+        const user = data.user
+
+        const { error } = await supabase
+            .from('articles')
+            .insert([
+                {
+                    title,
+                    content,
+                    youtube_url: youtubeUrl,
+                    status: 'draft',
+                    author_id: user.id
+                }
+            ])
+
+        if (error) {
+            alert(error.message)
+        } else {
+            alert('作成した！')
+            resetForm()
+            loadArticles()
+        }
+    }
 
     const handleUpdate = async () => {
         let updateData = {
@@ -137,8 +161,7 @@ export default function Editor() {
             loadArticles()
         }
     }
-
-
+    
     const handleClose = async (id) => {
         const { error } = await supabase
             .from('articles')
@@ -194,13 +217,15 @@ export default function Editor() {
     }
 
     return (
-        <div style={{ padding: 20 }}>
+        <div className="container">
             <h2>編集者画面</h2>
 
             <button onClick={handleLogout}>ログアウト</button>
 
             <hr style={{ margin: '24px 0' }} />
 
+            {editingId && (
+                <>
             <h3>記事編集</h3>
 
             <input
@@ -212,11 +237,17 @@ export default function Editor() {
 
             <br /><br />
 
-            <textarea
-                placeholder="本文"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-            />
+                    <textarea
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        rows={10}
+                        style={{
+                            width: '100%',
+                            fontSize: '16px',
+                            lineHeight: '1.6',
+                            padding: '8px'
+                        }}
+                    />
 
             <br /><br />
 
@@ -243,6 +274,8 @@ export default function Editor() {
                 accept="image/*"
                 onChange={(e) => setImageFile(e.target.files[0])}
             />
+                </>
+            )}
 
             <br /><br />
 
@@ -259,12 +292,21 @@ export default function Editor() {
 
                     <br /><br />
 
-                    <button onClick={handleUpdate}>保存</button>
+                    <button onClick={editingId === 'new' ? handleCreate : handleUpdate}>
+                        保存
+                    </button>
                     <button onClick={resetForm}>キャンセル</button>
                 </>
             )}
+            <br /><br />
 
-            <hr style={{ margin: '24px 0' }} />
+            <button onClick={() => {
+                resetForm()
+                setEditingId('new')
+            }}>
+                ＋ 新規作成
+            </button>
+            <button onClick={() => handlePublish(editingId)}>公開</button>
 
             <h3>記事一覧</h3>
 
