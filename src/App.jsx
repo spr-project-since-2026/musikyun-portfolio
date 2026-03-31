@@ -5,6 +5,7 @@ import Login from './Login'
 import Writer from './Writer'
 import Editor from './Editor'
 import ProtectedRoute from './ProtectedRoute'
+import ArticleDetail from './ArticleDetail'
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Public />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/article/:id" element={<ArticleDetail />} />
         <Route
           path="/writer"
           element={

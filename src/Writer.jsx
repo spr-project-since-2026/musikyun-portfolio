@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from './supabase'
+function generateSlug(title, date, id) {
+    const slugTitle = title
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+
+    return `${slugTitle}-${date}-${id}`
+}
 
 export default function Writer() {
     const [title, setTitle] = useState('')
@@ -11,6 +19,7 @@ export default function Writer() {
     const [removeImage, setRemoveImage] = useState(false)
     const [articles, setArticles] = useState([])
     const [editingId, setEditingId] = useState(null)
+    const [currentStatus, setCurrentStatus] = useState('')
     const navigate = useNavigate()
 
     const loadMyArticles = async () => {
@@ -72,7 +81,6 @@ export default function Writer() {
     const handlePost = async () => {
         const { data: userData } = await supabase.auth.getUser()
         const user = userData.user
-
         let imageUrl = ''
         try {
             imageUrl = await uploadImage()
@@ -80,7 +88,10 @@ export default function Writer() {
             alert('画像アップロード失敗')
             return
         }
-
+        const date = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+        const tempId = crypto.randomUUID().slice(0, 6)
+        const slug = generateSlug(title, date, tempId)
+        
         const { error } = await supabase.from('articles').insert([
             {
                 title,
@@ -89,6 +100,7 @@ export default function Writer() {
                 author_id: user.id,
                 status: 'draft',
                 thumbnail_url: imageUrl,
+                slug: slug,
             },
         ])
 
@@ -138,29 +150,62 @@ export default function Writer() {
         }
     }
     const saveArticle = async (status) => {
+        console.log('editingId:', editingId, 'status:', status)
         const { data: userData } = await supabase.auth.getUser()
         const user = userData.user
         if (!user) return
 
-        const { error } = await supabase.from('articles').insert([
-            {
-                title,
-                content,
-                youtube_url: youtubeUrl,
-                author_id: user.id,
-                status: status,
-            },
-        ])
+        if (editingId) {
+            // 既存記事 → 更新
+            const { error } = await supabase
+                .from('articles')
+                .update({
+                    title,
+                    content,
+                    youtube_url: youtubeUrl,
+                    status:
+                     currentStatus === 'needs_revision' && status === 'draft'
+                     ? 'needs_revision'
+                     : status,
+                })
+                .eq('id', editingId)
 
-        if (error) {
-            console.error(error)
-            alert(error.message)
+            if (error) {
+                console.error(error)
+                alert(error.message)
+            } else {
+                alert('更新しました')
+                loadMyArticles()
+            }
+
         } else {
-            alert('保存しました')
-            setTitle('')
-            setContent('')
-            setYoutubeUrl('')
-            loadMyArticles()
+            // 新規記事 → 作成
+            const date = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+            const tempId = crypto.randomUUID().slice(0, 6)
+            const slug = generateSlug(title, date, tempId)
+            const { error } = await supabase
+                .from('articles')
+                .insert([
+                    {
+                        title,
+                        content,
+                        youtube_url: youtubeUrl,
+                        author_id: user.id,
+                        status: status,
+                        slug: slug,
+                    },
+                ])
+
+            if (error) {
+                console.error(error)
+                alert(error.message)
+            } else {
+                alert('保存しました')
+                setTitle('')
+                setContent('')
+                setYoutubeUrl('')
+                loadMyArticles()
+            }
         }
     }
     const handleDelete = async (id) => {
@@ -192,6 +237,7 @@ export default function Writer() {
         setCurrentImageUrl(article.thumbnail_url || '')
         setRemoveImage(false)
         setEditingId(article.id)
+        setCurrentStatus(article.status)
     }
 
     const handleLogout = async () => {

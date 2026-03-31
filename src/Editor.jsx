@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from './supabase'
+function generateSlug(title, date, id) {
+    const slugTitle = title
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+
+    return `${slugTitle}-${date}-${id}`
+}
 
 export default function Editor() {
     const [articles, setArticles] = useState([])
@@ -104,7 +112,9 @@ export default function Editor() {
     const handleCreate = async () => {
         const { data } = await supabase.auth.getUser()
         const user = data.user
-
+        const date = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+        const tempId = crypto.randomUUID().slice(0, 6)
+        const slug = generateSlug(title, date, tempId)
         const { error } = await supabase
             .from('articles')
             .insert([
@@ -113,7 +123,8 @@ export default function Editor() {
                     content,
                     youtube_url: youtubeUrl,
                     status: 'draft',
-                    author_id: user.id
+                    author_id: user.id,
+                    slug
                 }
             ])
 
@@ -228,11 +239,17 @@ export default function Editor() {
                 <>
             <h3>記事編集</h3>
 
-            <input
-                type="text"
+            <textarea
                 placeholder="タイトル"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                rows={3}
+                style={{
+                 width: '100%',
+                 fontSize: '24px',
+                 padding: '12px',
+                 boxSizing: 'border-box'
+                }}
             />
 
             <br /><br />
