@@ -113,7 +113,7 @@ export default function Editor() {
         const { data } = await supabase.auth.getUser()
         const user = data.user
         const date = new Date().toISOString().slice(0, 10).replace(/-/g, '')
-        const tempId = crypto.randomUUID().slice(0, 6)
+        const tempId = crypto.randomUUID().slice(0, 4)
         const slug = generateSlug(title, date, tempId)
         const { error } = await supabase
             .from('articles')
@@ -124,7 +124,7 @@ export default function Editor() {
                     youtube_url: youtubeUrl,
                     status: 'draft',
                     author_id: user.id,
-                    slug
+                    slug: slug,
                 }
             ])
 

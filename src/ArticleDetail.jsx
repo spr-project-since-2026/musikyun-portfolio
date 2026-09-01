@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { supabase } from './supabase'
 
 export default function ArticleDetail() {
-    const { id } = useParams()
+    const { slug } = useParams()
     const [article, setArticle] = useState(null)
 
     useEffect(() => {
@@ -11,7 +11,8 @@ export default function ArticleDetail() {
             const { data, error } = await supabase
                 .from('articles')
                 .select('*')
-                .eq('slug', id)
+                .eq('slug', slug)
+                .eq('status', 'published')
                 .single()
 
             if (error) {
@@ -23,7 +24,7 @@ export default function ArticleDetail() {
         }
 
         fetchArticle()
-    }, [id])
+    }, [slug])
 
     if (!article) {
         return <div style={{ padding: '40px', textAlign: 'center' }}>読み込み中...</div>
@@ -69,8 +70,8 @@ export default function ArticleDetail() {
                     </p>
 
                     <div style={{ textAlign: 'center', marginTop: '24px', marginBottom: '24px' }}>
-                        <a href="/">Articles</a>
-                        <a href="/about" style={{ marginLeft: '16px' }}>About</a>
+                        <Link to="/">Articles</Link>
+                        <Link to="/about" style={{ marginLeft: '16px' }}>About</Link>
                     </div>
                 </div>
 
@@ -96,6 +97,18 @@ export default function ArticleDetail() {
                     ))}
                 </h2>
 
+                {article.youtube_url && (
+                    <iframe
+                        width="100%"
+                        height="315"
+                        src={`https://www.youtube.com/embed/${article.youtube_url.split('v=')[1]?.split('&')[0]}`}
+                        title="YouTube video"
+                        frameBorder="0"
+                        allowFullScreen
+                    />
+                )}
+
+
                 <p style={{ fontSize: '11px', color: '#aaa', marginTop: '4px', textAlign: 'left' }}>
                     {article.created_at && new Date(article.created_at).toLocaleDateString('ja-JP')}
                 </p>
@@ -108,17 +121,6 @@ export default function ArticleDetail() {
                         {para}
                     </p>
                 ))}
-
-                {article.youtube_url && (
-                    <iframe
-                        width="100%"
-                        height="315"
-                        src={`https://www.youtube.com/embed/${article.youtube_url.split('v=')[1]?.split('&')[0]}`}
-                        title="YouTube video"
-                        frameBorder="0"
-                        allowFullScreen
-                    />
-                )}
 
                 <div style={{ marginTop: '32px' }}>
                     <Link to="/" style={{ color: '#2563eb', textDecoration: 'none' }}>

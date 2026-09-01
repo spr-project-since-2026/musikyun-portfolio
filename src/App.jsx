@@ -13,7 +13,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Public />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/article/:id" element={<ArticleDetail />} />
+        <Route path="/article/:slug" element={<ArticleDetail />} />
         <Route
           path="/writer"
           element={

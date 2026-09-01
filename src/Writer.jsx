@@ -89,7 +89,7 @@ export default function Writer() {
             return
         }
         const date = new Date().toISOString().slice(0, 10).replace(/-/g, '')
-        const tempId = crypto.randomUUID().slice(0, 6)
+        const tempId = crypto.randomUUID().slice(0, 4)
         const slug = generateSlug(title, date, tempId)
         
         const { error } = await supabase.from('articles').insert([
@@ -169,6 +169,7 @@ export default function Writer() {
                      : status,
                 })
                 .eq('id', editingId)
+                .eq('author_id', user.id)
 
             if (error) {
                 console.error(error)
@@ -181,7 +182,7 @@ export default function Writer() {
         } else {
             // 新規記事 → 作成
             const date = new Date().toISOString().slice(0, 10).replace(/-/g, '')
-            const tempId = crypto.randomUUID().slice(0, 6)
+            const tempId = crypto.randomUUID().slice(0, 4)
             const slug = generateSlug(title, date, tempId)
             const { error } = await supabase
                 .from('articles')

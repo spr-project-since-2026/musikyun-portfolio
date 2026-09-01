@@ -19,7 +19,8 @@ export default function Public() {
                 console.log(error)
                 return
             }
-
+            console.log('data:', data)
+            console.log('error:', error)
             setArticles(data || [])
         }
 
@@ -106,26 +107,6 @@ export default function Public() {
                             About
                         </Link>
 
-                        <a
-                            href="https://instagram.com/musikyun"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                                position: 'absolute',
-                                right: '0',
-                                top: '50%',
-                                transform: 'translateY(-50%)',
-                            }}
-                        >
-                            <img
-                                src="/insta.png"
-                                alt="Instagram"
-                                style={{
-                                    width: '20px',
-                                    height: '20px',
-                                }}
-                            />
-                        </a>
                     </div>
                 </div>
 
