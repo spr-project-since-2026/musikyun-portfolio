@@ -47,7 +47,7 @@ export default function Public() {
                 <div style={{ textAlign: 'center', marginBottom: '32px' }}>
                     <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                         <img
-                            src="/logo.png"
+                            src={`${import.meta.env.BASE_URL}logo.png`}
                             alt="Musikyun"
                             style={{
                                 width: '120px',
@@ -157,7 +157,7 @@ export default function Public() {
                                             />
                                         ) : (
                                             <img
-                                                src="/logo.png"
+                                                src={`${import.meta.env.BASE_URL}logo.png`}
                                                 alt="Musikyun"
                                                 className="thumbnail"
                                             />
