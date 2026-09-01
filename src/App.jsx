@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import Public from './Public'
 import About from './About'
 import Login from './Login'
@@ -9,7 +9,7 @@ import ArticleDetail from './ArticleDetail'
 
 export default function App() {
   return (
-    <BrowserRouter basename="/musikyun-portfolio">
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Public />} />
         <Route path="/login" element={<Login />} />
@@ -32,6 +32,6 @@ export default function App() {
         />
         <Route path="/about" element={<About />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
