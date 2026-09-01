@@ -9,7 +9,7 @@ import ArticleDetail from './ArticleDetail'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/musikyun-portfolio">
       <Routes>
         <Route path="/" element={<Public />} />
         <Route path="/login" element={<Login />} />
