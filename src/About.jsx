@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+
 export default function About() {
     return (
         <div className="container" style={{
@@ -19,8 +21,8 @@ export default function About() {
                     </p>
 
                     <div style={{ textAlign: 'center', marginTop: '24px', marginBottom: '24px' }}>
-                        <a href="/">Articles</a>
-                        <a href="/about">About</a>
+                        <Link to="/">Articles</Link>
+                        <Link to="/about">About</Link>
                     </div>
                 </div>
                 <div style={{ textAlign: 'left', lineHeight: '1.9', color: '#333' }}>
